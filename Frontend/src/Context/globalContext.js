@@ -1,7 +1,6 @@
 import React from "react";
 import {useState, useContext} from "react";
 import axios from "axios";
-import Expenses from "../Components/Expenses/expenses";
 const BASE_URL = "http://localhost:5000/api/v1/";
 
 const GlobalContext = React.createContext()
@@ -9,24 +8,31 @@ const GlobalContext = React.createContext()
 export const GlobalProvider = ({ children }) => {
     const [incomes,setIncomes] = useState([]);
     const [expenses,setExpenses] = useState([]);
+    const [budgets,setBudgets] = useState([]);
+    const [goals,setGoals] = useState([]);
     const [error,setError] = useState(null);
-
+    const [loading, setLoading] = useState(false);
 
     const addIncome = async (income) => {
-        const response = await axios.post(`${BASE_URL}add-income`, income)
+        await axios.post(`${BASE_URL}add-income`, income)
             .catch((err) =>{
                 setError(err.response.data.message)
             })
         getIncomes()
     }
     const getIncomes = async () => {
+        setLoading(true);
         const response = await axios.get(`${BASE_URL}get-incomes`)
         setIncomes(response.data)
-        console.log(response.data)
+        setLoading(false);
     }
     const deleteIncome = async(id) =>{
-        const res = await axios.delete(`${BASE_URL}delete-income/${id}`)
+        await axios.delete(`${BASE_URL}delete-income/${id}`)
         getIncomes()
+    }
+    const updateIncome = async (id, data) => {
+        await axios.put(`${BASE_URL}update-income/${id}`, data);
+        getIncomes();
     }
 
     const totalIncome = () =>{
@@ -37,20 +43,25 @@ export const GlobalProvider = ({ children }) => {
         return totalIncome;
     }
     const addExpense = async (expense) => {
-        const response = await axios.post(`${BASE_URL}add-expense`, expense)
+        await axios.post(`${BASE_URL}add-expense`, expense)
             .catch((err) =>{
                 setError(err.response.data.message)
             })
         getExpenses()
     }
     const getExpenses = async () => {
+        setLoading(true);
         const response = await axios.get(`${BASE_URL}get-expenses`)
         setExpenses(response.data)
-        console.log(response.data)
+        setLoading(false);
     }
     const deleteExpense = async(id) =>{
-        const res = await axios.delete(`${BASE_URL}delete-expense/${id}`)
+        await axios.delete(`${BASE_URL}delete-expense/${id}`)
         getExpenses()
+    }
+    const updateExpense = async (id, data) => {
+        await axios.put(`${BASE_URL}update-expense/${id}`, data);
+        getExpenses();
     }
 
     const totalExpenses = () =>{
@@ -71,6 +82,52 @@ export const GlobalProvider = ({ children }) => {
         })
         return history.slice(0, 3)
     }
+
+    // Budget functions
+    const addBudget = async (budget) => {
+        const response = await axios.post(`${BASE_URL}add-budget`, budget);
+        getBudgets(budget.month, budget.year);
+        return response.data;
+    }
+
+    const getBudgets = async (month, year) => {
+        const params = {};
+        if (month) params.month = month;
+        if (year) params.year = year;
+        const response = await axios.get(`${BASE_URL}get-budgets`, { params });
+        setBudgets(response.data);
+    }
+
+    const deleteBudget = async (id) => {
+        await axios.delete(`${BASE_URL}delete-budget/${id}`);
+        const currentMonth = new Date().getMonth() + 1;
+        const currentYear = new Date().getFullYear();
+        getBudgets(currentMonth, currentYear);
+    }
+
+    // Goal functions
+    const addGoal = async (goal) => {
+        const response = await axios.post(`${BASE_URL}add-goal`, goal);
+        getGoals();
+        return response.data;
+    }
+
+    const getGoals = async () => {
+        const response = await axios.get(`${BASE_URL}get-goals`);
+        setGoals(response.data);
+    }
+
+    const updateGoal = async (id, data) => {
+        const response = await axios.put(`${BASE_URL}update-goal/${id}`, data);
+        getGoals();
+        return response.data;
+    }
+
+    const deleteGoal = async (id) => {
+        await axios.delete(`${BASE_URL}delete-goal/${id}`);
+        getGoals();
+    }
+
     return (
         <GlobalContext.Provider value={{
             addIncome,
@@ -78,14 +135,26 @@ export const GlobalProvider = ({ children }) => {
             incomes,
             expenses,
             deleteIncome,
+            updateIncome,
             totalIncome,
             addExpense,
             deleteExpense,
+            updateExpense,
             getExpenses,
             totalExpenses,
             totalBalance,
             transactionHistory,
-            error,setError
+            error,setError,
+            loading,
+            budgets,
+            addBudget,
+            getBudgets,
+            deleteBudget,
+            goals,
+            addGoal,
+            getGoals,
+            updateGoal,
+            deleteGoal
         }}>
             {children}
         </GlobalContext.Provider>

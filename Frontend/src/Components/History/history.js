@@ -42,9 +42,9 @@ const HistoryStyled = styled.div`
     gap: 1rem;
 
     .history-item{
-        background: #FCF6F9;
-        border: 2px solid #FFFFFF;
-        box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+        background: var(--card-bg);
+        border: 2px solid var(--card-border);
+        box-shadow: 0px 1px 15px var(--shadow-color);
         padding: 1rem;
         border-radius: 20px;
         display: flex;

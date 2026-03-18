@@ -13,7 +13,10 @@ function IncomeItem({
                         description,
                         deleteItem,
                         indicatorColor,
-                        type
+                        type,
+                        isRecurring,
+                        recurringInterval,
+                        onEdit
                     }) {
     const categoryIcon = () =>{
         switch(category) {
@@ -71,8 +74,25 @@ function IncomeItem({
                         <p>{dollar} {amount}</p>
                         <p>{calender} {dateFormat(date)}</p>
                         <p>{comment} {description}</p>
+                        {isRecurring && (
+                            <p className="recurring-badge">
+                                🔄 <span>{recurringInterval}</span>
+                            </p>
+                        )}
                     </div>
                     <div className="btn-con">
+                        {onEdit && (
+                            <Button
+                                icon={<i className="fa-solid fa-pen-to-square"></i>}
+                                bPad={'1rem'}
+                                bRad={'50%'}
+                                bg={'#667eea'}
+                                color={'#fff'}
+                                iColor={'#fff'}
+                                hColor={'#764ba2'}
+                                onClick={() => onEdit(id)}
+                            />
+                        )}
                         <Button
                             icon={trash}
                             bPad={'1rem'}
@@ -91,9 +111,9 @@ function IncomeItem({
 }
 
 const IncomeItemStyled = styled.div`
-    background: #FCF6F9;
-    border: 2px solid #FFFFFF;
-    box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    box-shadow: 0px 1px 15px var(--shadow-color);
     border-radius: 20px;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -106,11 +126,11 @@ const IncomeItemStyled = styled.div`
         width: 80px;
         height: 80px;
         border-radius: 20px;
-        background: #F5F5F5;
+        background: var(--icon-bg);
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px solid #FFFFFF;
+        border: 2px solid var(--card-border);
         i{
             font-size: 2.6rem;
         }
@@ -153,6 +173,21 @@ const IncomeItemStyled = styled.div`
                     color: var(--primary-color);
                     opacity: 0.8;
                 }
+                .recurring-badge {
+                    background: rgba(102, 126, 234, 0.1);
+                    color: #667eea;
+                    padding: 2px 10px;
+                    border-radius: 8px;
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                    opacity: 1;
+                    span { text-transform: capitalize; }
+                }
+            }
+            .btn-con {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
             }
         }
     }

@@ -16,9 +16,11 @@ function Form() {
         date: '',
         category: '',
         description: '',
+        isRecurring: false,
+        recurringInterval: 'monthly',
     })
 
-    const { title, amount, date, category,description } = inputState;
+    const { title, amount, date, category, description, isRecurring, recurringInterval } = inputState;
 
     const handleInput = name => e => {
         setInputState({...inputState, [name]: e.target.value})
@@ -33,6 +35,8 @@ function Form() {
             date: '',
             category: '',
             description: '',
+            isRecurring: false,
+            recurringInterval: 'monthly',
         })
     }
     return(
@@ -85,6 +89,29 @@ function Form() {
                 <textarea name="description" value={description} placeholder='Add A Reference' id="description"
                           cols="30" rows="4" onChange={handleInput('description')}></textarea>
             </div>
+            <div className="recurring-control">
+                <label className="recurring-toggle">
+                    <input
+                        type="checkbox"
+                        checked={isRecurring}
+                        onChange={(e) => setInputState({...inputState, isRecurring: e.target.checked})}
+                    />
+                    <span className="toggle-slider"></span>
+                    <span className="toggle-label">🔄 Recurring</span>
+                </label>
+                {isRecurring && (
+                    <select
+                        value={recurringInterval}
+                        onChange={handleInput('recurringInterval')}
+                        className="recurring-select"
+                    >
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                )}
+            </div>
             <div className="submit-btn">
                 <Button
                     name={'Add Income'}
@@ -110,14 +137,14 @@ const FormStyled = styled.form`
         outline: none;
         padding: .5rem 1rem;
         border-radius: 5px;
-        border: 2px solid #fff;
-        background: transparent;
+        border: 2px solid var(--card-border);
+        background: var(--input-bg);
         resize: none;
-        box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
-        color: rgba(34, 34, 96, 0.9);
+        box-shadow: 0px 1px 15px var(--shadow-color);
+        color: var(--input-text);
 
         &::placeholder {
-            color: rgba(34, 34, 96, 0.4);
+            color: var(--primary-color3);
         }
     }
 
@@ -132,17 +159,69 @@ const FormStyled = styled.form`
         justify-content: flex-end;
 
         select {
-            color: rgba(34, 34, 96, 0.4);
+            color: var(--primary-color3);
 
             &:focus, &:active {
-                color: rgba(34, 34, 96, 1);
+                color: var(--primary-color);
             }
         }
     }
 
+    .recurring-control {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .recurring-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--primary-color2);
+        input {
+            display: none;
+        }
+        .toggle-slider {
+            width: 40px;
+            height: 22px;
+            background: #ccc;
+            border-radius: 22px;
+            position: relative;
+            transition: 0.3s;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            &::before {
+                content: '';
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                background: white;
+                border-radius: 50%;
+                top: 2px;
+                left: 2px;
+                transition: 0.3s;
+            }
+        }
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            &::before {
+                transform: translateX(18px);
+            }
+        }
+    }
+
+    .recurring-select {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+
     .submit-btn {
         button {
-            box-shadow: 0px 1px 15px rgba(0, 0, 0, 0.06);
+            box-shadow: 0px 1px 15px var(--shadow-color);
 
             &:hover {
                 background: var(--color-green) !important;

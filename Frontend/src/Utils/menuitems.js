@@ -25,4 +25,22 @@ export const menuItems = [
         icon: expenses,
         link: "/dashboard",
     },
+    {
+        id: 5,
+        title: "Budgets",
+        icon: <i className="fa-solid fa-piggy-bank"></i>,
+        link: "/dashboard",
+    },
+    {
+        id: 7,
+        title: "Goals",
+        icon: <i className="fa-solid fa-bullseye"></i>,
+        link: "/dashboard",
+    },
+    {
+        id: 6,
+        title: "Settings",
+        icon: <i className="fa-solid fa-cog"></i>,
+        link: "/dashboard",
+    },
 ]

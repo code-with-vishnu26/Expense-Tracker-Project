@@ -1,12 +1,17 @@
 const router = require("express").Router();
-const {addIncome,getIncomes, deleteIncome} = require("../controllers/income");
-const {addExpense, getExpenses, deleteExpense} = require("../controllers/expense");
+const {addIncome,getIncomes, deleteIncome, updateIncome} = require("../controllers/income");
+const {addExpense, getExpenses, deleteExpense, updateExpense} = require("../controllers/expense");
+const { exportCSV } = require("../controllers/export");
+const { protect } = require("../middleware/authMiddleware");
 
-router.post('/add-income',addIncome)
-    .get('/get-incomes',getIncomes)
-    .delete('/delete-income/:id',deleteIncome)
-    .post('/add-expense',addExpense)
-    .get('/get-expenses',getExpenses)
-    .delete('/delete-expense/:id',deleteExpense)
+router.post('/add-income', protect, addIncome)
+    .get('/get-incomes', protect, getIncomes)
+    .delete('/delete-income/:id', protect, deleteIncome)
+    .put('/update-income/:id', protect, updateIncome)
+    .post('/add-expense', protect, addExpense)
+    .get('/get-expenses', protect, getExpenses)
+    .delete('/delete-expense/:id', protect, deleteExpense)
+    .put('/update-expense/:id', protect, updateExpense)
+    .get('/export/csv', protect, exportCSV)
 
 module.exports = router;
