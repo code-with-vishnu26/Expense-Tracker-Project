@@ -360,4 +360,30 @@ Same as FR-INC-01 through FR-INC-07 for expenses.
 
 ---
 
+## 11. Known Issues, Errors Faced & Solutions
+
+During the software development lifecycle, several critical bugs and architectural challenges were identified and mitigated:
+
+### 11.1 Chart Rendering Memory Leaks
+- **Issue:** Rapidly updating dashboard data sometimes caused the `Canvas is already in use` error from Chart.js.
+- **Root Cause:** React components unmounted/updated without gracefully destroying the underlying Chart.js canvas instances.
+- **Solution:** Utilized the `react-chartjs-2` wrapper library, leveraging its managed lifecycle hooks to automatically destroy previous chart contexts before rendering new ones over the same canvas.
+
+### 11.2 Authentication State Desynchronization
+- **Issue:** Users experienced silent API failures (401 errors) after their JWT token expired, leaving the frontend UI in a broken, authenticated-looking state.
+- **Root Cause:** Missing centralized error handling for expired tokens on protected API calls.
+- **Solution:** Improved the Global/Auth Context logic to catch 401 responses, clear the expired token from storage, and force a reactive redirect to the login screen.
+
+### 11.3 PWA Stale Cache Problem
+- **Issue:** Following new feature deployments, browsers sometimes loaded old versions of the application due to PWA service worker caching.
+- **Root Cause:** The default service worker configuration prioritized cached static assets excessively.
+- **Solution:** Customized the service worker caching strategy for network-first fetching of critical assets while maintaining offline capabilities for static UI elements.
+
+### 11.4 Duplicate Budget Entries
+- **Issue:** Users could occasionally create duplicate budget entries for the same month and category.
+- **Root Cause:** Fast, repeated API calls before the frontend disabled the submit button bypassed initial validation.
+- **Solution:** Implemented UI-level debouncing/loading states on the form buttons and enforced a strict MongoDB compound unique index (`user`, `category`, `month`, `year`) to guarantee data integrity at the database layer.
+
+---
+
 *End of SRS Document*

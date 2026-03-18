@@ -403,6 +403,32 @@ After opening the app in Chrome:
 
 ---
 
+## ⚠️ Errors Faced & Solutions
+
+During the development of Expense Tracker Pro, several technical challenges and errors were encountered. Here is a summary of the most significant issues and how they were resolved:
+
+### 1. Chart.js Canvas Re-rendering Error
+**Error:** `Canvas is already in use. Chart with ID '0' must be destroyed before the canvas can be reused.`
+**Context:** This occurred when switching between different views on the Dashboard.
+**Solution:** Maintained the use of `react-chartjs-2`, ensuring that chart components correctly unmount and destroy their underlying instances when data or chart types change dynamically.
+
+### 2. PWA Service Worker Caching Stale Data
+**Error:** The app occasionally loaded old versions of UI components instead of the latest updates.
+**Context:** Aggressive caching by the PWA service worker kept stale assets in the browser cache.
+**Solution:** Adjusted the caching strategy within the service worker and `manifest.json` ecosystem to ensure a better balance between offline availability and fetching fresh updates.
+
+### 3. JWT Token Expiry Leading to Silent Failures
+**Error:** API requests failed with `401 Unauthorized` without redirecting the user to the login page.
+**Context:** When the JWT expired, the frontend state sometimes remained "logged in", leading to broken UI states for the user.
+**Solution:** Configured frontend state management (Context API) to correctly handle JWT expiry, actively clearing tokens and redirecting unauthenticated sessions back to the login screen.
+
+### 4. Budget Compound Index Conflicts
+**Error:** `MongoServerError: E11000 duplicate key error collection`
+**Context:** Occurred when saving budgets if a user rapidly double-clicked the "Save" button for the same category and month.
+**Solution:** Disabled the submit button during the API request (loading state) and relied on the MongoDB compound index (`user + category + month + year`) to safely reject duplicates at the database level.
+
+---
+
 ## 🤝 Contributing
 
 1. Fork the repository
